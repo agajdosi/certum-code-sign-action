@@ -1,5 +1,7 @@
 name: 'Certum code signing'
-description: 'Code signs Windows binaries using Certum service Code Sign in the Cloud.'
+description: |
+  Code signs Windows binaries using Certum service Code Sign in the Cloud.
+  Env variables CERTUM_EMAIL and CERTUM_OTP are expected to be set.
 author: 'Andy Gajdosik'
 branding:
   icon:  shield
@@ -26,10 +28,10 @@ runs:
   using: "composite"
   steps:
     - name: Install Cargo
+      shell: sh
       run: cargo install ssign
-    - Name: Code sign the binaries
+    - name: Code sign the binaries
+      shell: sh
       env:
         INPUT_PATH: ${{ inputs.input_path }}
-        CERTUM_EMAIL: ${{ secrets.CERTUM_EMAIL }}
-        CERTUM_OTP:   ${{ secrets.CERTUM_OTP }}
       run: ssign $INPUT_PATH
