@@ -9,7 +9,7 @@ branding:
 
 inputs:
   input_path:
-    description: 'Path to file or directory to sign'
+    description: 'Path to file or directory to sign. Wildcard * can be used.'
     deault: '*.exe'
     required: true
 
@@ -17,19 +17,22 @@ inputs:
     description: 'Certum account e-mail'
 
   ssign_version:
-    description: 'Version of the ssign tool to use (https://docs.rs/crate/ssign)'
-    default: '0.28.0'
-
-outputs:
-  output_path:
-    description: 'Path to signed/notarized/stapled entity'
+    description: 'Version of the ssign tool to use (https://docs.rs/crate/ssign).'
+    default: ''
 
 runs:
   using: "composite"
   steps:
-    - name: Install Cargo
+    - name: Install ssign (latest)
+      if: ${{ inputs.ssign_version == '' }}
       shell: sh
       run: cargo install ssign
+
+    - name: Install ssign ${{ inputs.ssign_version }} 
+      if: ${{ inputs.ssign_version != '' }}
+      shell: sh
+      run: cargo install ssign --version ${{ inputs.ssign_version }}
+
     - name: Code sign the binaries
       shell: sh
       env:
