@@ -1,0 +1,35 @@
+name: 'Certum code signing'
+description: 'Code signs Windows binaries using Certum service Code Sign in the Cloud.'
+author: 'Andy Gajdosik'
+branding:
+  icon:  shield
+  color: blue
+
+inputs:
+  input_path:
+    description: 'Path to file or directory to sign'
+    deault: '*.exe'
+    required: true
+
+  certum_email:
+    description: 'Certum account e-mail'
+
+  ssign_version:
+    description: 'Version of the ssign tool to use (https://docs.rs/crate/ssign)'
+    default: '0.28.0'
+
+outputs:
+  output_path:
+    description: 'Path to signed/notarized/stapled entity'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Cargo
+      run: cargo install ssign
+    - Name: Code sign the binaries
+      env:
+        INPUT_PATH: ${{ inputs.input_path }}
+        CERTUM_EMAIL: ${{ secrets.CERTUM_EMAIL }}
+        CERTUM_OTP:   ${{ secrets.CERTUM_OTP }}
+      run: ssign $INPUT_PATH
